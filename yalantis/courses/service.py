@@ -1,6 +1,5 @@
 from ..models import db, Course, course_schema, courses_schema
 from .dto import CreateCourseDto
-from sqlalchemy.exc import IntegrityError
 
 
 def view_all_courses() -> list:
@@ -17,11 +16,7 @@ def add_new_course(course: CreateCourseDto):
         lectures_amount=course.lectures_amount,
     )
     db.session.add(new_course)
-    try:
-        db.session.commit()
-
-    except IntegrityError:
-        raise Exception('Course with such name is already present.')
+    db.session.commit()
 
 
 def view_course_details(course_id):
