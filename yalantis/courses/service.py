@@ -19,7 +19,7 @@ def add_new_course(course: CreateCourseDto):
     db.session.commit()
 
 
-def view_course_details(course_id):
+def view_course_details(course_id: int):
     course = Course.query.filter_by(id=course_id).first()
     return course_schema.dump(course)
 
@@ -32,5 +32,10 @@ def update_course_details():
     pass
 
 
-def delete_course():
-    pass
+def delete_course_by_id(course_id: int) -> str:
+    course = Course.query.filter_by(id=course_id).first()
+    if course:
+        db.session.delete(course)
+        db.session.commit()
+        return 'Course was deleted'
+    return 'There is no course with such id'
