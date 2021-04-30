@@ -13,7 +13,7 @@ def all_courses():
     return jsonify(view_all_courses()), 200
 
 
-@courses.route('/new', methods=['POST'])
+@courses.route('/add', methods=['POST'])
 @json_body_required
 def add_new():
     try:

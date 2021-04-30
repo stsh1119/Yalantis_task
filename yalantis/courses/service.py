@@ -11,8 +11,8 @@ def view_all_courses() -> list:
 def add_new_course(course: CreateCourseDto):
     new_course = Course(
         name=course.name,
-        start_date=course.start_date,
-        end_date=course.end_date,
+        start_date=course.start_date.replace(microsecond=0),
+        end_date=course.end_date.replace(microsecond=0),
         lectures_amount=course.lectures_amount,
     )
     db.session.add(new_course)
