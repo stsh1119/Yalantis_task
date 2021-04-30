@@ -8,12 +8,12 @@ from ..utils import json_body_required
 courses = Blueprint('courses', __name__, url_prefix='/courses')
 
 
-@courses.route('/all', methods=['GET'])
+@courses.route('/', methods=['GET'])
 def all_courses():
     return jsonify(view_all_courses()), 200
 
 
-@courses.route('/add', methods=['POST'])
+@courses.route('/', methods=['POST'])
 @json_body_required
 def add_new():
     try:
@@ -25,12 +25,12 @@ def add_new():
         return e.json(), 400
 
 
-@courses.route('/delete/<int:course_id>', methods=['DELETE'])
+@courses.route('/<int:course_id>', methods=['DELETE'])
 def delete_course(course_id):
     return jsonify(delete_course_by_id(course_id)), 200
 
 
-@courses.route('/update/<int:course_id>', methods=['PATCH'])
+@courses.route('/<int:course_id>', methods=['PATCH'])
 @json_body_required
 def update(course_id):
     try:
