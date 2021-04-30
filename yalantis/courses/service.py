@@ -1,5 +1,5 @@
 from ..models import db, Course, course_schema, courses_schema
-from .dto import CreateCourseDto
+from .dto import CourseDto
 
 
 def view_all_courses() -> list:
@@ -8,7 +8,7 @@ def view_all_courses() -> list:
     return serialized_courses
 
 
-def add_new_course(course: CreateCourseDto):
+def add_new_course(course: CourseDto):
     new_course = Course(
         name=course.name,
         start_date=course.start_date.replace(microsecond=0),
@@ -20,7 +20,7 @@ def add_new_course(course: CreateCourseDto):
 
 
 def view_course_details(course_id: int):
-    course = Course.query.filter_by(id=course_id).first()
+    course = Course.query.filter_by(id=course_id).first_or_404()
     return course_schema.dump(course)
 
 
@@ -28,12 +28,19 @@ def find_course_by_dates():
     pass
 
 
-def update_course_details():
-    pass
+def update_course_details(course_id: int, updated_info: CourseDto):
+    course = Course.query.filter_by(id=course_id).first_or_404()
+
+    course.name = updated_info.name
+    course.start_date = updated_info.start_date
+    course.end_date = updated_info.end_date
+    course.lectures_amount = updated_info.lectures_amount
+
+    db.session.commit()
 
 
 def delete_course_by_id(course_id: int) -> str:
-    course = Course.query.filter_by(id=course_id).first()
+    course = Course.query.filter_by(id=course_id).first_or_404()
     if course:
         db.session.delete(course)
         db.session.commit()

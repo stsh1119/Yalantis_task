@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from pydantic import ValidationError
-from .service import view_all_courses, add_new_course, view_course_details, delete_course_by_id
-from .dto import CreateCourseDto
+from .service import view_all_courses, add_new_course, view_course_details, delete_course_by_id, update_course_details
+from .dto import CourseDto
 from ..utils import json_body_required
 
 
@@ -17,20 +17,29 @@ def all_courses():
 @json_body_required
 def add_new():
     try:
-        course = CreateCourseDto.parse_obj(request.json)
+        course = CourseDto.parse_obj(request.json)
         add_new_course(course)
         return jsonify('Course was added'), 201
 
     except ValidationError as e:
         return e.json(), 400
 
-    except Exception as e:
-        return jsonify(str(e)), 400
-
 
 @courses.route('/delete/<int:course_id>', methods=['DELETE'])
 def delete_course(course_id):
     return jsonify(delete_course_by_id(course_id)), 200
+
+
+@courses.route('/update/<int:course_id>', methods=['PATCH'])
+@json_body_required
+def update(course_id):
+    try:
+        updated_course_data = CourseDto.parse_obj(request.json)
+        update_course_details(course_id, updated_course_data)
+        return jsonify('Course was updated'), 200
+
+    except ValidationError as e:
+        return e.json(), 400
 
 
 @courses.route('/<int:course_id>', methods=['GET'])
