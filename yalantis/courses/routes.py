@@ -1,7 +1,8 @@
 from flask import Blueprint, jsonify, request
 from pydantic import ValidationError
-from .service import view_all_courses, add_new_course, view_course_details, delete_course_by_id, update_course_details
-from .dto import CourseDto
+from .service import (view_all_courses, add_new_course, view_course_details,
+                      delete_course_by_id, update_course_details, find_course_by_name_within_dates)
+from .dto import CourseDto, SearchCourseDto
 from ..utils import json_body_required
 
 
@@ -10,6 +11,15 @@ courses = Blueprint('courses', __name__, url_prefix='/courses')
 
 @courses.route('/', methods=['GET'])
 def all_courses():
+    if request.args:
+        try:
+            searched_course = SearchCourseDto.parse_obj(request.args)
+            result = find_course_by_name_within_dates(searched_course)
+            return jsonify(result), 200
+
+        except ValidationError as e:
+            return e.json(), 400
+
     return jsonify(view_all_courses()), 200
 
 

@@ -1,9 +1,18 @@
 from ..models import db, Course, course_schema, courses_schema
-from .dto import CourseDto
+from .dto import CourseDto, SearchCourseDto
 
 
 def view_all_courses() -> list:
     courses = Course.query.all()
+    serialized_courses = courses_schema.dump(courses)
+    return serialized_courses
+
+
+def find_course_by_name_within_dates(searched_course: SearchCourseDto) -> list:
+    courses = Course.query.filter(Course.start_date >= searched_course.start_date).\
+        filter(Course.end_date <= searched_course.end_date).\
+        filter(Course.name == searched_course.name).all()
+
     serialized_courses = courses_schema.dump(courses)
     return serialized_courses
 
@@ -22,10 +31,6 @@ def add_new_course(course: CourseDto):
 def view_course_details(course_id: int):
     course = Course.query.filter_by(id=course_id).first_or_404()
     return course_schema.dump(course)
-
-
-def find_course_by_dates():
-    pass
 
 
 def update_course_details(course_id: int, updated_info: CourseDto):

@@ -13,3 +13,9 @@ class CourseDto(BaseModel):
         if 'start_date' in values and v < values['start_date']:
             raise ValueError('start_date must be less than end_date')
         return v
+
+
+class SearchCourseDto(BaseModel):
+    name: str
+    start_date: datetime
+    end_date: datetime
